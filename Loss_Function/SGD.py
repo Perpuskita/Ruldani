@@ -9,7 +9,7 @@ y = np.array([2, 4, 6, 8, 10])
 w = np.random.randn()  # Bobot awal
 b = np.random.randn()  # Bias awal
 learning_rate = 0.01
-epochs = 1000
+epochs = 10
 
 # Fungsi loss (Mean Squared Error)
 mse_loss = lambda w, b: np.mean((y - (w * X + b)) ** 2)
