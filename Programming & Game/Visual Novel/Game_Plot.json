@@ -1,0 +1,57 @@
+{
+    "Plot": [
+        {
+            "Key": "000",
+            "Entries": [
+                {
+                    "Type": "Teks",
+                    "Content": {
+                        "PlayerName": "Narator",
+                        "Dialog": "Dig.. Dug.. Dag..\n ...",
+                        "Next": "001",
+
+                        "Background": "Spring",
+                        "Mid": "Hamdan"
+
+                    }
+                }
+            ]
+        },
+        {
+            "Key": "002",
+            "Entries": [
+                {
+                    "Type": "Button",
+                    "Content": {
+                        "Dialog1": "Yo Hallo Sam",
+                        "Dialog2": "Hei Sam",
+                        "Dialog3": "None",
+                        "Link1": "002",
+                        "Link2": "002",
+                        "Link3": "None",
+
+                        "Background": "Summer"
+
+                    }
+                }
+            ]
+        },
+        {
+            "Key": "001",
+            "Entries": [
+                {
+                    "Type": "Teks",
+                    "Content": {
+                        "PlayerName": "Sam",
+                        "Dialog": "Yo Hallo Hamdan",
+                        "Next": "000",
+
+                        "Background": "Summer",
+                        "Mid" :  "Hamdan"
+
+                    }
+                }
+            ]
+        }
+    ]
+}
