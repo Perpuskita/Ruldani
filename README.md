@@ -1,2 +1,2 @@
 # Ruldani
-Project_ngawur
+Project_portofolio | game developer and AI engineer
