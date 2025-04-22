@@ -12,4 +12,4 @@ Siator adalah sebuah project untuk menirukan mesin ATM, tujuan dari aplikasi ini
 ## Visual Novel with json
 Visual Novel with json adalah sebuah project untuk membuat template visual novel dengan menggunakan game engine Unity. Visual novel ini dapat digerakan hanya menggunakan sintaksis dari sebuah file json. Tujuan dari project ini adalah membuat visual novel yang dinamis dan dapat digunakan berkali - kali tanpa harus melakukan coding pada game engine.
 
-![alt text](https://github.com/Perpuskita/Ruldani/blob/main/img/siator.png?raw=true)
+![alt text](https://github.com/Perpuskita/Ruldani/blob/main/img/Visual_Novel_withJson.jpg?raw=true)
