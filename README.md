@@ -16,6 +16,6 @@ Visual Novel with json adalah sebuah project untuk membuat template visual novel
 
 
 ## Pepsiwalk
-sebuah project untuk menirukan pepsi namun dengan movement 3D alih alih menggunakan 2D object seperti pepsiman lama
+sebuah project untuk menirukan pepsi namun dengan movement 3D alih alih menggunakan 2D object seperti game pepsiman asli
 
 ![alt text](https://github.com/Perpuskita/Ruldani/blob/main/img/PepsiWalk.gif?raw=true)
