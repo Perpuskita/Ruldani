@@ -1,35 +1,23 @@
 import fitz  # PyMuPDF
 
-# Buka file PDF
-doc = fitz.open("Chapter4.pdf")
+def show_annotations(page):
+    """Display information about annotations on a PDF page."""
+    width, height = page.rect.width, page.rect.height
+    print(f"Page size: {width:.1f} x {height:.1f} points")
+    for annot in page.annots():
+        info = annot.info
+        print(f"Type: {annot.type[1]}")
+        print(f"Author: {info.get('title', 'Unknown')}")
+        print(f"{info.get('content', '')}")
+        print(f"Position x0: {annot.rect.x0}")
+        #print(f"Position x1: {annot.rect.x1}")
+        #print(f"Position y0: {annot.rect.y0}")
+        print(f"Position y0: {annot.rect.y1}\n" + "-"*30)
 
+def open_pdf(path, page: int):
+    doc = fitz.open(path)
+    page = doc[page] 
+    show_annotations(page)
 
-# Show PDF function
-def show_pdf(annot):
-    info = annot.info
-    subtype = annot.type[0]  # Jenis anotasi (Text, Highlight, dll)
-    content = info.get("content", "")
-    author = info.get("title", "Unknown")
-    rect = annot.rect  # Posisi anotasi
-
-    width = page.rect.width
-    height = page.rect.height
-    print(f"  Lebar  = {width} poin")
-    print(f"  Tinggi = {height} poin")
-    print(f"  Jenis anotasi: {subtype}")
-    print(f"  Penulis: {author}")
-    print(content)
-    print(f"  Posisi (x0, y0, x1, y1): {rect}")
-    print("-" * 30)
-
-
-# Loop halaman
-for page_num, page in enumerate(doc, start=1):
-    
-    annot = page.first_annot
-    while annot:
-        show_pdf(annot)
-        annot = annot.next
-        
-
-doc.close()
+if __name__ == "__main__":
+    open_pdf("Chapter4.pdf", 18)
