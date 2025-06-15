@@ -8,13 +8,23 @@ class container():
         self.coor_x = coor_x
         self.coor_y = coor_y
 
-    def content_read(self):
-        return self.content.split("TRS:", 1)[-1]
+    def content_read(self, split:int = 2):
+
+        text = self.content.split("TRS:", 1)[-1]
+        words = text.split()
+        cut_text = []
+
+        for i in range(0, len(words), split):
+            
+            two_words = ' '.join(words[i:i+split])
+            cut_text.append(two_words)
+        
+        return '\r'.join(cut_text)
     
     def coor_read(self):
         return self.coor_x, self.coor_y
 
-def write_text(doc, pos, text:str, font:str ):
+def write_text(doc, pos, text:str, font:str = "SofiaSansCondensed-Regular" ):
     
     text_color = ps.SolidColor()
     text_color.rgb.red = 0
@@ -28,6 +38,8 @@ def write_text(doc, pos, text:str, font:str ):
     new_text_layer.textItem.size = 12
     new_text_layer.textItem.color = text_color
     new_text_layer.textItem.font = font
+    new_text_layer.textItem.justification = 2
+    new_text_layer.textItem.autoLeadingAmount = 110
 
 
 def open_pdf( path, page):
@@ -48,7 +60,7 @@ def open_pdf( path, page):
         #     #print(f"Position x1: {annot.rect.x1}")
         #     #print(f"Position y0: {annot.rect.y0}")
         # print(f"Position y0: {annot.rect.y1}\n" + "-"*30)
-        container_temp.append(container(info.get('content', ''), annot.rect.x0, annot.rect.y0))
+        container_temp.append(container(info.get('content', ''), annot.rect.x0, annot.rect.y1  ))
 
     # print(container_temp)
 
@@ -70,16 +82,17 @@ sfx3= "Play-Bold"
 sfx4= "Mansalva-Regular"
 
 # Open File
-path = '08882685_047_1.psd'
-path_pdf = 'SakamotoDays Vol 2  cp 10.pdf'
-page = 2
+path = '08882685_107_1.psd'
+path_pdf = 'SakamotoDays Vol 2  cp 13.pdf'
+page = 0
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(current_dir, path)
+file_path = os.path.join(current_dir, 'PSD')
+file_path = os.path.join(file_path, path)
 file_path = os.path.normpath(file_path).replace(os.sep, "/")
 
 with Session(file_path,action="open") as ps:
-    ps.echo(ps.active_document.name)
+    #ps.echo(ps.active_document.name)
     ps.app.preferences.rulerUnits = ps.Units.Pixels
     doc = ps.active_document
 
