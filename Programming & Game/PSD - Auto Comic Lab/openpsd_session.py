@@ -1,28 +1,7 @@
 from photoshop import Session
 import os
 import fitz 
-
-class container():
-    def __init__(self, content, coor_x, coor_y):
-        self.content = content
-        self.coor_x = coor_x
-        self.coor_y = coor_y
-
-    def content_read(self, split:int = 2):
-
-        text = self.content.split("TRS:", 1)[-1]
-        words = text.split()
-        cut_text = []
-
-        for i in range(0, len(words), split):
-            
-            two_words = ' '.join(words[i:i+split])
-            cut_text.append(two_words)
-        
-        return '\r'.join(cut_text)
-    
-    def coor_read(self):
-        return self.coor_x, self.coor_y
+import container
 
 def write_text(doc, pos, text:str, font:str = "SofiaSansCondensed-Regular" ):
     
@@ -60,7 +39,7 @@ def open_pdf( path, page):
         #     #print(f"Position x1: {annot.rect.x1}")
         #     #print(f"Position y0: {annot.rect.y0}")
         # print(f"Position y0: {annot.rect.y1}\n" + "-"*30)
-        container_temp.append(container(info.get('content', ''), annot.rect.x0, annot.rect.y1  ))
+        container_temp.append(container.container(info.get('content', ''), annot.rect.x0, annot.rect.y1 ))
 
     # print(container_temp)
 
