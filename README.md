@@ -1,7 +1,7 @@
 
 
 # Ruldani
-Project_portofolio | game developer and AI engineer
+Project_portofolio | Game developer and AI engineer
 
 ## Siator
 Siator adalah sebuah project untuk menirukan mesin ATM, tujuan dari aplikasi ini sebagai aplikasi untuk belajar menggunakan ATM tanpa harus khawatir error atau memakan waktu yang lama bagi pengguna ATM baru ataupun masyarakat yang kurang update dalam tarik atau setor tunai. Siator dikembangkan dengan bahasa pemograman java
