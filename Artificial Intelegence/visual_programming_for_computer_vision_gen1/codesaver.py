@@ -1,23 +1,27 @@
 
-###### Controller node interprenter ######
+###### Node interprenter ######
 
-def init_processing( name ):
-    if name == "folder":
-        return Preferences_Folder("folder")
-    elif name == "gdrive folder":
-        return Preferences_GDrive("gdrive")
-    elif name == "pembentukan citra":
-        return Preferences_PembentukCitra("pembentukan citra")
-    elif name == "analisa biner":
-        return Preferences_Biner("analisa biner")
-    elif name == "analisa abu":
-        return Preferences_Abu("analisa abu")
-    elif name == "transformasi fourier":
-        return Preferences_Fourier("transformasi fourier")
-    elif name == "deteksi tepi":
-        return Preferences_Tepi("deteksi tepi")
-    elif name == "ekstraksi_fitur":
-        return Preferences_Efitur("ekstraksi_fitur")
+class interpreter_code:
+    def __init__(self, name):
+        self.name = name
+
+    def get_interpreter( self ):
+        if self.name == "folder":
+            return Preferences_Folder("folder")
+        elif self.name == "gdrive folder":
+            return Preferences_GDrive("gdrive")
+        elif self.name == "pembentukan citra":
+            return Preferences_PembentukCitra("pembentukan citra")
+        elif self.name == "analisa biner":
+            return Preferences_Biner("analisa biner")
+        elif self.name == "analisa abu":
+            return Preferences_Abu("analisa abu")
+        elif self.name == "transformasi fourier":
+            return Preferences_Fourier("transformasi fourier")
+        elif self.name == "deteksi tepi":
+            return Preferences_Tepi("deteksi tepi")
+        elif self.name == "ekstraksi_fitur":
+            return Preferences_Efitur("ekstraksi_fitur")
 
 ###### Node interprenter for folder import #######
 
@@ -180,7 +184,7 @@ class Preferences_Tepi():
         self.name = name
         self.selected_framework = frameworks
 
-# EKSTRAKSI FITURRRRR
+###### Node interprenter untuk ekstraksi fitur #######
 
 def ekstrak_fitur_opencv(path):
     return f'''def plot_show(image, counter):\n\n\tplt.subplot((counter // 6) + 1, 6, counter % 6 + 1)\n\tplt.imshow(image, cmap='gray')\n\tplt.axis('off')\n\n# Fungsi untuk menghitung GLCM\ndef compute_glcm(image, dx, dy):\n\tmax_gray = 256\n\tglcm = np.zeros((max_gray, max_gray), dtype=int)\n\trows, cols = image.shape\n\n\tfor i in range(rows - dx):\n\t\tfor j in range(cols - dy):\n\t\t\tintensity1 = image[i, j]\n\t\t\tintensity2 = image[i + dx, j + dy]\n\t\t\tglcm[intensity1, intensity2] += 1\n\n\t# Normalisasi GLCM agar menjadi probabilitas\n\tglcm = glcm / np.sum(glcm)\n\treturn glcm\n\ndef printout_matrix(matrix):\n\tfor row in matrix:\n\t\tprint(\"\\n\")\n\t\tprint(row[4], \"\\n\")\n\t\tprint(\"Contrast :\", row[0])\n\t\tprint(\"Homogeneity :\", row[1])\n\t\tprint(\"Energy :\", row[2])\n\t\tprint(\"Entropy :\", row[3], \"\\n\")\n\ndef folder_ekstraksi_fitur(folder_path):\n\tcounter = 0\n\tshow_matrix = []\n\tplt.figure(figsize=(15, 10))\n\tfor filename in os.listdir(folder_path):\n\t\tif filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):   \n\t\t\timage_path = os.path.join(folder_path, filename)\n\t\t\timage = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)\n\t\t\tplot_show(image, counter)\n\t\t\tcounter += 1\n\n\t\t\tdx, dy = 1, 0  # Arah horizontal\n\t\t\tglcm = compute_glcm(image, dx, dy)\n\n\t\t\tcontrast = np.sum((np.arange(glcm.shape[0])[:, None] - np.arange(glcm.shape[1]))**2 * glcm)\n\t\t\thomogeneity = np.sum(glcm / (1.0 + (np.arange(glcm.shape[0])[:, None] - np.arange(glcm.shape[1]))**2))\n\t\t\tenergy = np.sum(glcm ** 2)\n\t\t\tentropy = -np.sum(glcm * np.log2(glcm + 1e-10))  # Tambahkan 1e-10 untuk mencegah log(0)\n\t\t\tshow_matrix.append([contrast, homogeneity, energy, entropy, filename])\n\n\t\tif counter % 6 == 0:\n\t\t\tplt.show()\n\t\t\tcounter = 0\n\t\t\tprintout_matrix(show_matrix)\n\t\t\tplt.figure(figsize=(15, 10))\n\n\n\tif counter != 0:\n\t\tplt.show()\n\t\tprintout_matrix(show_matrix)\n\nfolder_ekstraksi_fitur({path})'''

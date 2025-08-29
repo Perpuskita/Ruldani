@@ -1,0 +1,15 @@
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.AssemblyInfoInputs.cache
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.AssemblyInfo.cs
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.sourcelink.json
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\bin\Debug\net9.0\CrosswordApp.exe
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\bin\Debug\net9.0\CrosswordApp.deps.json
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\bin\Debug\net9.0\CrosswordApp.runtimeconfig.json
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\bin\Debug\net9.0\CrosswordApp.dll
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\bin\Debug\net9.0\CrosswordApp.pdb
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.dll
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\refint\CrosswordApp.dll
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.pdb
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\CrosswordApp.genruntimeconfig.cache
+C:\Users\Administrator\Documents\GitHub\Ruldani\Programming & Game\Crossword on C Sharp\CrosswordApp\obj\Debug\net9.0\ref\CrosswordApp.dll

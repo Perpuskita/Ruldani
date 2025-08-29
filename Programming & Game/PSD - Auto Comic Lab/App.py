@@ -1,7 +1,9 @@
 from psd_tools import PSDImage
 from PIL import Image, ImageTk
 from PDFviewer import PDFViewer
+from image_processing import image
 import tkinter as tk
+import matplotlib.pyplot as plt
 
 
 class PSDViewer:
@@ -44,7 +46,8 @@ class PSDViewer:
 
         # Get info height and width 
         # print (f" height = {psd.height}, width = {psd.width}, ratio = {psd.height / psd.width}")
-        
+        print(self.pdf.content())
+
         # PSD composite to img
         composite = psd.composite()
         height = 600
@@ -52,14 +55,16 @@ class PSDViewer:
 
         # Resize image composite
         composite = composite.resize((width , height), Image.LANCZOS)
-        
+        tes = image(composite)
+        tes.show()
+
         # Convert to PhotoImage
-
-        print(composite)
-        self.photo = ImageTk.PhotoImage(composite)
-        self.photo_view = ImageTk.PhotoImage(composite)
-
-        print(self.pdf.open_pdf()[1])
+        self.photo = tes.imageTK()
+        self.photo_view = tes.imageTK()
+        
+        # composite.save('tes.jpeg', 'JPEG', quality=90)
+        # image container
+        # tes.show()
 
         # Display on canvas
         self.canvas.create_image(

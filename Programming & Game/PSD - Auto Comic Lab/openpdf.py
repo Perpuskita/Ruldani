@@ -74,7 +74,7 @@ def open_pdf(path, page: int):
         width, height = 100, 50  # Sesuaikan!
         x1, y1 = x0 + width, y0 + height
 
-        print(x0, y0, x1, y1)
+        # print(x0, y0, x1, y1)
         
 if __name__ == "__main__":
     open_pdf("SakamotoDays Vol 2  cp 13.pdf", 18)

@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "CrosswordApp/1.0.0": {
+        "runtime": {
+          "CrosswordApp.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CrosswordApp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
