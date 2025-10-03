@@ -1,3 +1,11 @@
+
+# warna node
+default = "#808080"
+path = "#ff7b00"
+plt = "#4421a7"
+output = "#00ff00"
+
+
 # Kelas untuk membuat berzier curve
 class nodeberzier:
 
@@ -23,6 +31,12 @@ class nodeberzier:
         self.nodeberzier_container = nodeberzier_container
         self.active_line = active_line
     
+    def line_colour(self):
+        if self.type == "path":
+            return path
+        
+        return default
+
     def start_connection(self, event): 
   
         self.canvas.delete(self.line_id)
@@ -53,7 +67,7 @@ class nodeberzier:
                 node_y = node.image_id.winfo_y() + node.coor.winfo_y()
 
                 if ( abs(x - node_x) < 7 and -7 < abs(y -10 - node_y) < 7 ): 
-                    if (self.type != node.type):
+                    if (self.type == node.type):
                         
                         if node.next != None : 
                             node.canvas.delete(node.line_id)
@@ -84,7 +98,7 @@ class nodeberzier:
         cx1, cy1 = (x1 + x2) / 2, y1
         cx2, cy2 = (x1 + x2) / 2, y2
         points = self.bezier_points(x1, y1, cx1, cy1, cx2, cy2, x2, y2)
-        self.line_id = self.canvas.create_line(points, fill="red", width=2, tags="line", smooth=True)
+        self.line_id = self.canvas.create_line(points, fill=self.line_colour(), width=2, tags="line", smooth=True)
 
     def bezier_points(self, x1, y1, cx1, cy1, cx2, cy2, x2, y2, num_points=100):
         points = []

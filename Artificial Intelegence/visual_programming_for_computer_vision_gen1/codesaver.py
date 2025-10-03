@@ -2,10 +2,16 @@
 ###### Node interprenter ######
 
 class interpreter_code:
+
     def __init__(self, name):
         self.name = name
+        self.interpreter = self.get_interpreter()
+        self.input = self.interpreter.input
+        self.output = self.interpreter.output
 
+    #  Controller
     def get_interpreter( self ):
+
         if self.name == "folder":
             return Preferences_Folder("folder")
         elif self.name == "gdrive folder":
@@ -22,6 +28,8 @@ class interpreter_code:
             return Preferences_Tepi("deteksi tepi")
         elif self.name == "ekstraksi_fitur":
             return Preferences_Efitur("ekstraksi_fitur")
+        # else :
+        #     print(f"inisialisasi node gagal")
 
 ###### Node interprenter for folder import #######
 
@@ -33,6 +41,8 @@ class Preferences_Folder():
         self.name = name
         self.link = "/content/test"
         self.header = []
+        self.input = []
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["link", self.link]]
@@ -47,13 +57,17 @@ class Preferences_Folder():
 ###### Node interprenter for gdrive folder import #######
 
 def gdrive_code( name, link):
-    return f'''drive.mount('/content/drive')\n{name} = "{link}"\n'''
+    return f'''
+drive.mount('/content/drive')
+{name} = "{link}"'''
 
 class Preferences_GDrive():
     def __init__(self, name):
         self.name = name
-        self.link = "/content/drive/MyDrive/test"
+        self.link = '/content/drive/MyDrive/test'
         self.header = ['''from google.colab import drive''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["link", self.link]]
@@ -68,7 +82,42 @@ class Preferences_GDrive():
 ###### Node interprenter for pembentukan citra #######
 
 def preference_pembentukcitra(path):
-    return f'''def plot_show_rgb(image, counter, cmaps = None):\n\n\tplt.subplot((counter // 6) + 1, 6, counter % 6 + 1)\n\n\tif cmaps is not None:\n\t\tplt.imshow(image, cmap=cmaps)\n\telse:\n\t\tplt.imshow(image)\n\n\tplt.axis('off')\n\n# Fungsi untuk melakukan transformasi Fourier pada gambar dalam folder\ndef transform_folder_images(folder_path):\n\t # Membuat figure baru di sini\n\n\tfor filename in os.listdir(folder_path):\n\t\tif filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):\n\n\t\t\tplt.figure(figsize=(15,15)) \n\n\t\t\timage_path = os.path.join(folder_path, filename)\n\n\t\t\t# Baca gambar dan lakukan Fourier Transform\n\t\t\timage = Image.open(image_path)\n\t\t\timage_rgb = image.convert('RGB')\n\n\t\t\tr,g,b = image_rgb.split()\n\n\t\t\tplot_show_rgb(image_rgb, 0)\n\t\t\tplot_show_rgb(r, 1, cmaps='Reds')\n\t\t\tplot_show_rgb(g, 2, cmaps='Greens')\n\t\t\tplot_show_rgb(b, 3, cmaps='Blues')\n\n\t\t\timage_gray = image.convert('L')     \n\t\t\tplot_show_rgb(image_rgb, 4)\n\t\t\tplot_show_rgb(image_gray.convert('RGB'), 5)\n\n\t\t\tplt.show()\n\ntransform_folder_images({path})'''
+    return f'''
+def plot_show_rgb(image, counter, cmaps = None):
+    
+    plt.subplot((counter // 6) + 1, 6, counter % 6 + 1)
+    if cmaps is not None:
+        plt.imshow(image, cmap=cmaps)
+    else:
+        plt.imshow(image)
+    
+    plt.axis('off')
+
+# Fungsi untuk melakukan transformasi Fourier pada gambar dalam folder
+def transform_folder_images(folder_path):
+    # Membuat figure baru di sini
+    for filename in os.listdir(folder_path):
+        if filename.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.tiff')):
+            
+            plt.figure(figsize=(15,15)) 
+            image_path = os.path.join(folder_path, filename)
+            
+            # Baca gambar dan lakukan Fourier Transform
+            image = Image.open(image_path)
+            image_rgb = image.convert('RGB')
+            r,g,b = image_rgb.split()
+            
+            plot_show_rgb(image_rgb, 0)
+            plot_show_rgb(r, 1, cmaps='Reds')
+            plot_show_rgb(g, 2, cmaps='Greens')
+            plot_show_rgb(b, 3, cmaps='Blues')
+            
+            image_gray = image.convert('L')     
+            plot_show_rgb(image_rgb, 4)
+            plot_show_rgb(image_gray.convert('RGB'), 5)
+            plt.show()
+
+transform_folder_images({path})'''
 
 class Preferences_PembentukCitra():
     def __init__(self, name):
@@ -76,7 +125,11 @@ class Preferences_PembentukCitra():
         self.link = None
         self.framework = ["Pillow"]
         self.selected_framework = "Pillow"
-        self.header = ['''import matplotlib.pyplot as plt''', '''import numpy as np''', '''from PIL import Image''']
+        self.header = ["import matplotlib.pyplot as plt",
+                       "import numpy as np",
+                       "from PIL import Image"]
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]
@@ -103,6 +156,8 @@ class Preferences_Biner():
         self.framework = ["OpenCV"]
         self.selected_framework = "OpenCV"
         self.header = ['''import matplotlib.pyplot as plt''', '''import numpy as np''', '''import os''', '''from PIL import Image''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]
@@ -126,6 +181,8 @@ class Preferences_Abu():
         self.framework = ["OpenCV"]
         self.selected_framework = "OpenCV"
         self.header = ['''import matplotlib.pyplot as plt''', '''import numpy as np''', '''import os''', '''from PIL import Image''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]
@@ -149,6 +206,8 @@ class Preferences_Fourier():
         self.framework = ["PIL"]
         self.selected_framework = "PIL"
         self.header = ['''import matplotlib.pyplot as plt''', '''import numpy as np''', '''import os''', '''from PIL import Image''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]
@@ -160,6 +219,7 @@ class Preferences_Fourier():
     def update_data(self, name, frameworks):
         self.name = name
         self.selected_framework = frameworks
+
 
 ###### Node interprenter untuk deteksi tepi #######
 
@@ -173,6 +233,8 @@ class Preferences_Tepi():
         self.framework = ["OpenCV"]
         self.selected_framework = "OpenCV"
         self.header = ['''import matplotlib.pyplot as plt''', '''import numpy as np''', '''import cv2''', '''import os''', '''from PIL import Image''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]
@@ -196,6 +258,8 @@ class Preferences_Efitur():
         self.framework = ["OpenCV"]
         self.selected_framework = "OpenCV"
         self.header = ['''import matplotlib.pyplot as plt''','''from PIL import Image''','''import numpy as np''', '''import os''']
+        self.input = ["path"]
+        self.output = ["path"]
 
     def atribute(self):
         return [["nama", self.name], ["framework", self.framework, self.selected_framework]]

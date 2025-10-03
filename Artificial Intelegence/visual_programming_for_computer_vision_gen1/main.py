@@ -6,9 +6,10 @@ import pyperclip
 from codesaver import interpreter_code
 import tkinter as tk
 from nodeberzier import nodeberzier
+from highlight_syntax import highlight
 
 # Atur mode tampilan (light/dark)
-ctk.set_appearance_mode("dark")  
+ctk.set_appearance_mode("dark")
 
 # Define your base directory
 base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,6 +25,8 @@ HOVER_COLOR = "#0056b3"
 BACKGROUND_COLOR = "#343a40"
 TEXT_COLOR = "#ffffff"
 DARK_COLOR = "#000000"
+
+FONT = "Consolas"
 
 # Define constant toggle visual or code
 toggle_visual_or_code = True
@@ -42,8 +45,11 @@ class Button:
         self.subbutton_frame = None  # To hold the frame for sub-buttons
         self.main_button = None
 
+    def get_icon_path(self, filename):
+        return os.path.join(base_dir, "icons", filename)
+    
     def _create_image(self, icon_button):
-        icon_path = get_icon_path(icon_button)
+        icon_path = self.get_icon_path(icon_button)
         return ctk.CTkImage(Image.open(icon_path), size=(16, 16))
 
     def toggle_expand(self):
@@ -54,29 +60,70 @@ class Button:
 
 # Kelas untuk Sub_Button
 class SubButton:
-    def __init__(self, sub_button_name, sub_button_icon, hover_color):
+    def __init__(self, sub_button_name, sub_button_icon, hover_color, input = [], output = []):
         self.sub_button_name = sub_button_name
-        self.icon_path = get_icon_path(sub_button_icon)
+        self.icon_path = self.get_icon_path(sub_button_icon)
         self.sub_button_icon = self._create_image(height=15, width=15)
         self.hover_color = hover_color
+        self.interpreter = self.node_container(sub_button_name)
+        self.input = self.input_node()
+        self.output = self.output_node()
 
-    def _create_image(self, height = 75 , width = 75):
+    def _create_image(self, height = 15 , width = 15):
         return ctk.CTkImage(Image.open(self.icon_path), size=(height, width))
+
+    # Fungsi untuk membuat baris node 
+    # Menghasilkan container dari kelas interpreter
+    def node_container(self, name):
+        # print(f"inisialisasi dari kelas interpreter {name}")
+        return interpreter_code(name)
+
+    # input dari kelas interpreter code
+    # mengahasilkan list dari input interpreter code
+    def input_node(self):
+        # print(f"type input interpreter {self.sub_button_name}")
+        # for n in self.interpreter.input:
+        #     print(f"{n}\n")
+        return self.interpreter.input
+
+    def output_node(self):
+        # print(f"type output interpreter {self.sub_button_name}")
+        # for n in self.interpreter.output:
+        #     print(f"{n}\n")
+        return self.interpreter.output
+
+    def get_icon_path(self, filename):
+        return os.path.join(base_dir, "icons", filename)
 
 # Kelas untuk Dragable Node
 class DraggableNode(ctk.CTkFrame):
 
     def __init__(self, master, name, icon, visual_framer, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.name = name
-        self.configure(width=65, height=50, fg_color="transparent", corner_radius=5)
-        self.preferences = interpreter_code(name).get_interpreter()
+        
+        # Adaptation subbutton properties
+        self.name = name.sub_button_name
+        self.configure(width=65, 
+                       height=50, 
+                       fg_color="transparent", 
+                       corner_radius=5)
+        self.preferences = interpreter_code(self.name).get_interpreter()
+
         # Create icon label
         self.on_drag = False
-        self.icon_bg = ctk.CTkLabel(self, width=50, height=50, corner_radius=5, fg_color=SECONDARY_COLOR, text="")
-        self.icon_bg.place(relx=0.5, rely=0.5, anchor="center")
-
-        self.icon_label = ctk.CTkLabel(self, fg_color=SECONDARY_COLOR, image=icon, text="")
+        self.icon_bg = ctk.CTkLabel(self, 
+                                    width=50, 
+                                    height=50, 
+                                    corner_radius=5, 
+                                    fg_color=SECONDARY_COLOR, 
+                                    text="")
+        self.icon_bg.place(relx=0.5, 
+                           rely=0.5, 
+                           anchor="center")
+        self.icon_label = ctk.CTkLabel(self, 
+                                       fg_color=SECONDARY_COLOR, 
+                                       image=icon, 
+                                       text="")
         self.icon_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Add a small delete button (e.g., "X") on the top-right corner of the node
@@ -89,9 +136,11 @@ class DraggableNode(ctk.CTkFrame):
             hover_color="#FF6666",
             command=self.delete_node,
             text_color="white",
-            font=("Arial", 10, "bold")
+            font=(FONT, 10, "bold")
         )
-        self.delete_button.place(x = 5, rely=0.1, anchor="center")  # Position at top-right corner
+        self.delete_button.place(x = 5, 
+                                 rely=0.1, 
+                                 anchor="center")  # Position at top-right corner
         self.delete_button.lower()
         self.delete_button_hover = False
         self.node_container = []
@@ -109,39 +158,76 @@ class DraggableNode(ctk.CTkFrame):
         self.pos_y_init = 0
         self._enable_dragging()
 
+        # binding for base 
+        # hover & hover leave
         self.bind("<Enter>", self.on_hover)
         self.bind("<Leave>", self.on_hover_leave)
+
+        # binding icon bg
+        # hover & hover leave
         self.icon_bg.bind("<Enter>", self.on_hover)
         self.icon_bg.bind("<Leave>", self.on_hover_leave)
+        
+        # binding icon label 
+        # hover & hover leave
         self.icon_label.bind("<Enter>", self.on_hover)
         self.icon_label.bind("<Leave>", self.on_hover_leave)
 
+        # binding button delete
+        # hover & hover leave
         self.delete_button.bind("<Enter>", self.on_delete_button_hover)
         self.delete_button.bind("<Leave>", self.on_delete_button_leave)
 
-    def append(self, Neo):
-        nodeberzier_container.append(Neo), self.node_container.append(Neo)
+        # indicator for hover delete
+        self.on_hover_delete = False
 
+    def append(self, Neo):
+        nodeberzier_container.append(Neo)
+        self.node_container.append(Neo)
+
+    # node icon input
     def node_icon_input(self, visual_framer):
-        node_icon_output_image= ctk.CTkLabel(self, height=5, width=5, fg_color="transparent", image=self._node(get_icon_path("imageOutput1.png")), text="")
-        node_icon_output_image.place(x=5, rely=0.5, anchor="center")    
-        return nodeberzier(visual_framer,"output",node_icon_output_image, self, nodeberzier_container, active_line)
-    
+        type_node = "path"
+        node_icon_output_image= ctk.CTkLabel(self,
+                                             height=5,
+                                             width=5,
+                                             fg_color="transparent",
+                                             image=self._node(get_icon_path("imageInput1.png")),
+                                             text="")
+        node_icon_output_image.place(x=5,
+                                     rely=0.5,
+                                     anchor="center")
+            
+        return nodeberzier(visual_framer,type_node,node_icon_output_image, self, nodeberzier_container, active_line)
+    # node icon output
     def node_icon_output(self, visual_framer):
-        node_icon_output_image= ctk.CTkLabel(self, height=5, width=5, fg_color="transparent", image=self._node(get_icon_path("image4.png")), text="")
-        node_icon_output_image.place(x=60, rely=0.5, anchor="center")
-        self.output = nodeberzier(visual_framer,"input",node_icon_output_image, self, nodeberzier_container, active_line )
+        type_node = "path"
+        node_icon_output_image= ctk.CTkLabel(self,
+                                             height=5,
+                                             width=5,
+                                             fg_color="transparent",
+                                             image=self._node(get_icon_path("imageOutput1.png")),
+                                             text="")
+        node_icon_output_image.place(x=60,
+                                     rely=0.5,
+                                     anchor="center")
+        
+        self.output = nodeberzier(visual_framer,type_node,node_icon_output_image, self, nodeberzier_container, active_line )
         return self.output
-        
+    
     def node_generator(self):
-        
-        self.node_icon = ctk.CTkLabel(self, height=5, width=5, fg_color="transparent", image=self._node(get_icon_path("imageInput1.png")), text="")
+
+        self.node_icon = ctk.CTkLabel(self, 
+                                      height=5, 
+                                      width=5, 
+                                      fg_color="transparent", 
+                                      image=self._node(get_icon_path("imageInput1.png")), 
+                                      text="")
         self.node_icon.place(x=60, rely=0.5, anchor="center")
         #pywin.set_opacity(self.node_icon, value = 0.5)
 
         self.node_icon = ctk.CTkLabel(self, height=5, width=5, fg_color="transparent", image=self._node(get_icon_path("imageOutput1.png")), text="")
         self.node_icon.place(x=5, rely=0.5, anchor="center")
-
 
     def delete_node(self):
         """Delete the current node from the visual frame and node_container."""
@@ -184,7 +270,6 @@ class DraggableNode(ctk.CTkFrame):
     def _node(self, icon):
         icon_path = get_icon_path(icon)
         return ctk.CTkImage(Image.open(icon_path), size=(10, 10))
-
 
     def _enable_dragging(self):
 
@@ -230,24 +315,48 @@ if __name__ == "__main__":
     
     def get_icon_path(filename):
         return os.path.join(base_dir, "icons", filename)
-    
+
     # Define buttons and sub-buttons
     buttons = [
         Button("Input System", "home.png", [
-            SubButton("folder", "folder.png",GREEN_PALLETE),
-            SubButton("gdrive folder", "gdrive.png",GREEN_PALLETE)
+            # sub button folder
+            SubButton("folder",
+                      "folder.png",
+                      GREEN_PALLETE),
+            # sub button gdrive
+            SubButton("gdrive folder",
+                      "gdrive.png",
+                      GREEN_PALLETE)
         ]),
         Button("Konsep Pendahuluan", "cpm1.png", [
-            SubButton("pembentukan citra", "pembentukan citra.png", LIGHT_GREEN_PALLETE),
+            # sub button pembentukan citra
+            SubButton("pembentukan citra",
+                      "pembentukan citra.png",
+                      LIGHT_GREEN_PALLETE),
         ]),
         Button("Pengolahan\nCitra digital", "cpm2.png", [
-            SubButton("analisa biner", "analisa_citra_biner.png", YELLOW_PALLETE),
-            SubButton("analisa abu", "analisa_citra_abu.png", YELLOW_PALLETE),
-            SubButton("transformasi fourier", "transformasi_fourier.png", YELLOW_PALLETE)
+            # sub button analisa binner
+            SubButton("analisa biner",
+                      "analisa_citra_biner.png",
+                      YELLOW_PALLETE),
+            # sub button analisa abu
+            SubButton("analisa abu",
+                      "analisa_citra_abu.png",
+                      YELLOW_PALLETE),
+            # sub button transformasi fourier
+            SubButton("transformasi fourier",
+                      "transformasi_fourier.png",
+                      YELLOW_PALLETE)
         ]),
         Button("Klasifikasi dan        \n Pengenalan Object", "cpm3.png", [
-            SubButton("deteksi tepi", "deteksi_tepi.png", ORANGE_PALLETE),
-            SubButton("ekstraksi_fitur", "ekstraksi_fitur.png", ORANGE_PALLETE)
+            # sub button deteksi tepi
+            SubButton("deteksi tepi",
+                      "deteksi_tepi.png",
+                      ORANGE_PALLETE),
+            # sub button ekstasi fitur
+            SubButton("ekstraksi_fitur",
+                      "ekstraksi_fitur.png",
+                      ORANGE_PALLETE)
         ])
     ]
 
@@ -255,7 +364,7 @@ if __name__ == "__main__":
 
     # Create main window
     root = tk.Tk()
-    root.geometry("1000x500")
+    root.geometry("1080x720")
     root.title("Skripsi program visual programming")
 
     # Create sidebar frame
@@ -263,7 +372,7 @@ if __name__ == "__main__":
     sidebar.grid(row=0, column=0, sticky="nsw")
 
     # Create sidebar label
-    sidebar_label = ctk.CTkLabel(sidebar, text="Connection", font=("Arial", 16, "bold"), text_color=TEXT_COLOR)
+    sidebar_label = ctk.CTkLabel(sidebar, text="Connection", font=(FONT, 16, "bold"), text_color=TEXT_COLOR)
     sidebar_label.grid(row=0, column=0, padx=20, pady=20)
 
     # Function to create main sidebar buttons
@@ -307,10 +416,19 @@ if __name__ == "__main__":
                     hover_color=sub_button.hover_color
                 )
                 subbutton.grid(row=j // max_columns, column=j % max_columns, padx=5, pady=5)
+
                 # Bind hover events
-                subbutton.bind("<Enter>", lambda event, icon=sub_button._create_image(60,60), name=sub_button.sub_button_name: show_frame(event, icon, name))
+                subbutton.bind("<Enter>", 
+                               lambda event,
+                               icon=sub_button._create_image(60,60),
+                               name=sub_button.sub_button_name: 
+                               show_frame(event, icon, name))
                 subbutton.bind("<Leave>", hide_frame)
-                subbutton.bind("<Double-1>", lambda event,icon=sub_button._create_image(30,30), button_name=sub_button.sub_button_name: on_double_click(event, button_name,icon))
+                subbutton.bind("<Double-1>", 
+                               lambda event,icon=sub_button._create_image(30,30),
+                               button_name=sub_button:
+                               on_double_click(event, button_name,icon))
+                
 
         update_sidebar_buttons()
 
@@ -382,7 +500,7 @@ if __name__ == "__main__":
         icon_label = ctk.CTkLabel(master=frame, image=icon, text="")
         icon_label.place(relx=0.5, y = 10, anchor='n')
 
-        name_label = ctk.CTkLabel(master=frame, text=name, font=("Arial", 12))
+        name_label = ctk.CTkLabel(master=frame, text=name, font=(FONT, 12))
         name_label.place(relx=0.5, y=75, anchor='n')
 
     # Function to hide the new frame when hover ends
@@ -399,7 +517,7 @@ if __name__ == "__main__":
         for widget in preference_frame.winfo_children():
             widget.destroy()
         
-        title = ctk.CTkLabel(master=preference_frame, text="Preferences", font=("Arial", 16, "bold"))
+        title = ctk.CTkLabel(master=preference_frame, text="Preferences", font=(FONT, 16, "bold"))
         title.pack(pady=20, padx = 60)
 
     # Create sidebar buttons
@@ -447,43 +565,14 @@ if __name__ == "__main__":
             code_button.configure(state="disabled", fg_color=GREEN_PALLETE, text_color=DARK_COLOR)
             visual_button.configure(state="normal", fg_color="#2B2B2B", text_color=TEXT_COLOR)
             
-            #connection text code
-
-            text_code = combine_all_codes()  # Dapatkan gabungan semua kode dari node
-            textbox.configure(state="normal")
-            textbox.delete("1.0", "end")
-            textbox.insert("end", f"\n --- hello.. selamat datang \n --- ini code anda \n")
-            textbox.insert("end", text_code)
-
-            def highlight_text( search_text, start_index, fr_text):
-                # Mencari teks "silahkan"
-                start_index = textbox.search(search_text, start_index, stopindex="end")
-
-                if not start_index:  # Jika tidak ditemukan, keluar dari fungsi
-                    return
-
-                # Menghitung indeks akhir dari substring yang ditemukan
-                end_index = f"{start_index.split('.')[0]}.{int(start_index.split('.')[1]) + len(search_text)}"
-
-                # Cek karakter setelah end_index
-                next_index = f"{start_index.split('.')[0]}.{int(start_index.split('.')[1]) + len(search_text)}"
-                next_char = textbox.get(next_index)  # Mendapatkan karakter di next_index
-
-                if next_char == " ":
-                # Konfigurasi tag untuk teks berwarna
-                    textbox.tag_configure(search_text, foreground=fr_text)
-                    textbox.tag_add(search_text, start_index, end_index)
-
-                # Lanjutkan mencari dari posisi setelah substring terakhir yang ditemukan
-                highlight_text(search_text, end_index, fr_text)
+            # connection text code
             
-            # Memulai pencarian dengan menyertakan argumen warna
-            highlight_text("=", "1.0", ORANGE_PALLETE)
-            highlight_text("image_path", "1.0", "#D1AEFA")
-            highlight_text("image", "1.0", "#DEAEFA")
-            highlight_text("from", "1.0", "#DEAEFA")
-            highlight_text("import", "1.0", "#DEAEFA")
-
+            # reset sekaligus konfigurasi ulang
+            textbox.configure(state="normal")
+            textbox.delete("1.0", "end")    
+            # Dapatkan gabungan semua kode dari node
+            textbox.insert("end", combine_all_codes())
+            highlight(textbox)
             textbox.configure(state="disabled") 
 
     def on_code_button_click():
@@ -502,7 +591,7 @@ if __name__ == "__main__":
         for widget in preference_frame.winfo_children():
             widget.destroy()
         
-        title = ctk.CTkLabel(master=preference_frame, text="Preferences", font=("Arial", 16, "bold"))
+        title = ctk.CTkLabel(master=preference_frame, text="Preferences", font=(FONT, 16, "bold"))
         title.pack(pady=20, padx = 60)
 
         def update_info(event=None):
@@ -512,7 +601,7 @@ if __name__ == "__main__":
 
         for node in self.preferences.atribute():  
             if node[0] == "nama" :
-                name_label = ctk.CTkLabel(master=preference_frame, text="Name:                        ", font=("Arial", 14))
+                name_label = ctk.CTkLabel(master=preference_frame, text="Name", font=(FONT, 14))
                 name_label.pack(pady=(0,0))
                 name_entry = ctk.CTkEntry(master=preference_frame)
                 name_entry.insert(0, node[1])
@@ -521,7 +610,7 @@ if __name__ == "__main__":
                 values.append(name_entry)
 
             elif node[0] == "framework":
-                framework_label = ctk.CTkLabel(master=preference_frame, text="Framework:                ", font=("Arial", 14))
+                framework_label = ctk.CTkLabel(master=preference_frame, text="Framework", font=(FONT, 14))
                 framework_label.pack(pady=(10,0))
                 framework_combo = ctk.CTkComboBox(master=preference_frame, values=node[1], command= update_info)
                 framework_combo.pack(padx=30,pady=0)
@@ -529,7 +618,7 @@ if __name__ == "__main__":
                 values.append(framework_combo)
 
             elif node[0] == "link":
-                link_label = ctk.CTkLabel(master=preference_frame, text="Link:                          ", font=("Arial", 14))
+                link_label = ctk.CTkLabel(master=preference_frame, text="Link", font=(FONT, 14))
                 link_label.pack(pady=(20, 0))
                 link_entry = ctk.CTkEntry(master=preference_frame)
                 link_entry.insert(0, node[1])  # Menampilkan link awal
@@ -566,7 +655,7 @@ if __name__ == "__main__":
     visual_button.grid(row=0, column=1, padx=5, pady=5)
 
     def copy_code():
-        pyperclip.copy(text_code)
+        pyperclip.copy(combine_all_codes())
 
     code_frame.grid_rowconfigure(0, weight=1)  
     code_frame.grid_columnconfigure(0, weight=1)  
@@ -595,7 +684,7 @@ if __name__ == "__main__":
 
     toggle_buttons()
 
-    textbox = tk.Text(code_frame, width=0, height=10, bg=DARK_COLOR , fg=TEXT_COLOR, bd=0, font=("Arial", 10))
+    textbox = tk.Text(code_frame, width=0, height=10, bg=DARK_COLOR , fg=TEXT_COLOR, bd=0, font=(FONT, 10),tabs=("1c"))
     textbox.grid(row=0, column=0, padx = (15,0), pady = 0, sticky="nswe")
 
     scrollbar = ctk.CTkScrollbar(code_frame, command=textbox.yview)
@@ -627,3 +716,4 @@ if __name__ == "__main__":
 
     # Run the application
     root.mainloop()
+    
